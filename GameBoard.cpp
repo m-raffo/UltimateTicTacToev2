@@ -189,3 +189,109 @@ int GameBoard::GetSpotStatus(int s) {
 
     return 0;
 };
+
+BoardCoords AbsoluteIndexToBoardAndPiece(int i) {
+    BoardCoords result;
+
+    // i = index
+    // gx = global x value (independent of board)
+    // gy = same
+    // lx = local x value (within board)
+    // ly = same
+    // bx = x value of the whole board
+    // by = same
+    // pi = piece index
+    // bi = board index
+
+    int gx, gy, lx, ly, bx, by, pi, bi;
+
+    gx = i % 9;
+    gy = i / 9;
+
+    lx = gx % 3;
+    ly = gy % 3;
+
+    bx = (i % 9) / 3;
+    by = i / 27;
+
+    pi = ly * 3 + lx;
+    bi = by * 3 + bx;
+
+    result.board = bi;
+    result.piece = pi;
+
+    return result;
+}
+
+
+void GameBoard::DisplayBoard() {
+
+    if (xToMove) {
+        std::cout << "X to move\n";
+    } else {
+        std::cout << "O to move\n";
+    }
+
+    int requiredBoard = GetRequiredBoard();
+    if (requiredBoard != -1) {
+        std::cout << "Required board: " << requiredBoard << '\n';
+    } else {
+        std::cout << "Required board: None\n";
+    }
+
+    int absolutePieceIndex, location;
+    BoardCoords coords;
+
+    for (int row = 0; row < 9; row++) {
+        for (int boardRow = 0; boardRow < 3; boardRow++) {
+
+            for (int col = 0; col < 3; col++) {
+                absolutePieceIndex = (row * 9) + (boardRow * 3) + col;
+                coords = AbsoluteIndexToBoardAndPiece(absolutePieceIndex);
+                location = 2 + (2 * coords.piece);
+                int spotStatus = GetSpotStatus(absolutePieceIndex);
+                if (spotStatus == 1) {
+                    std::cout << "\033[31mX\033[0m";
+                } else if (spotStatus == 2) {
+                    std::cout << "\033[94mO\033[0m";
+                } else {
+                    std::cout << " ";
+                }
+
+                // Give a divider if not on the last one
+                if (col != 2) {
+                    std::cout << " | ";
+                }
+                
+
+            }
+
+            std::cout << "\\\\ ";
+
+        }
+
+        if ((row + 1) % 3 != 0){
+            std::cout << "\n---------   ---------   ---------   \n";
+        } else {
+            std::cout << "\n=================================\n";
+        }
+
+    }
+}
+
+int GameBoard::GetRequiredBoard() {
+    int requiredBoard = -1;
+
+    for (size_t i = 0; i < 9; i++) {
+        if (validBoards[i]) {
+            if (requiredBoard == -1) {
+                requiredBoard = i;
+            } else {
+                // There is no required board, as more than 1 board has been marked as valid
+                return -1;
+            }
+        }
+    }
+
+    return requiredBoard;
+}

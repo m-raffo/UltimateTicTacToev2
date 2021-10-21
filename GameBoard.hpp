@@ -166,6 +166,20 @@ class GameBoard {
          */
         int GetSpotStatus(int s);
 
+
+        /**
+         * Gets the board that must be played on.
+         * @return The id of the board, -1 if no required board
+         */
+        int GetRequiredBoard();
+
+
+        /**
+         * Gets all the valid moves.
+         * @return A vector with each valid move as a value in range 0..81.
+         */
+        std::vector<int> GetValidMoves();
+
 };
 
 
@@ -176,3 +190,16 @@ class GameBoard {
  * @return 1 if won by X, 2 if won by O, 0 if ongoing, -1 if tie.
  */
 int CheckMiniboardStatus(std::bitset<18> *miniboard);
+
+class BoardCoords{
+    public:
+        int board;
+        int piece;
+};
+
+/**
+ * Gets the board and piece index from an absolute index.
+ * @param i The index to convert
+ * @return The corresponding coordinates
+ */
+BoardCoords AbsoluteIndexToBoardAndPiece(int i);
