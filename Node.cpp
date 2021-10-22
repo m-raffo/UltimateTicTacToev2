@@ -1,5 +1,6 @@
 #include "Node.hpp"
 #include <math.h>
+#include <limits>
 
 Node::Node(Node * p, int pMove, int pPlayer) {
     parent = p;
@@ -19,6 +20,8 @@ void Node::CreateChildren(GameBoard * b) {
         return;
     }
 
+    childrenAdded = true;
+
     for(int i: b->GetValidMoves()) {
         children.push_back(new Node(this, i, b->GetPlayerToMove()));
     }
@@ -31,9 +34,9 @@ int Node::GetPreviousMove() {
 
 float Node::UCT(float c) {
     if (n == 0) {
-        return 0;
+        return std::numeric_limits<float>::max();
     }
-    return w / n + c * sqrt( log(parent->n) / n );
+    return (float)w / (float)n + c * sqrt( log(parent->n) / n );
 }
 
 Node::~Node() {

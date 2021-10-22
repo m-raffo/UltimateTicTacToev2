@@ -1,4 +1,5 @@
 #include "MCTS.hpp"
+#include <chrono>
 
 MCTS::MCTS(GameBoard * b) {
     game.CopyBoard(b);
@@ -12,10 +13,11 @@ void MCTS::SetUpSearch(GameBoard * g) {
 }
 
 void MCTS::MakeMove(int m) {
+
     Node * newRoot;
     for(Node * child : rootNode->children) {
         if (child->GetPreviousMove() != m) {
-            delete child;
+            // delete child;
         } else {
             newRoot = child;
         }
@@ -27,11 +29,17 @@ void MCTS::MakeMove(int m) {
 int MCTS::FindBestMove() {
     int bestValue = -1;
     int bestMove = 0;
+    std::cout << "N VALUES\n";
+    std::cout << rootNode->children.size() <<  "\n";
+
     for (Node * child : rootNode->children) {
         if (child->n > bestValue) {
             bestValue = child->n;
             bestMove = child->GetPreviousMove();
         }
+
+                    std::cout << child-> n << " " << child->w << " " << child->UCT(0.5) << "\n";
+
     }
 
     return bestMove;
@@ -39,53 +47,57 @@ int MCTS::FindBestMove() {
 
 void MCTS::RunSimulations(int num) {
 
-    for (size_t i = 0; i < num; i++) {
+    std::vector<std::chrono::microseconds> selection;
+    std::vector<std::chrono::microseconds> expansions;
+    std::vector<std::chrono::microseconds> simulation;
+    std::vector<std::chrono::microseconds> backpropagation;
 
-        std::cout << "Starting simulation.\n";
+    for (size_t i = 0; i < num; i++) {
 
         Node * currentNode = rootNode;
         workingGame.CopyBoard(&game);
 
-        std::cout << "Starting board...\n";
-        workingGame.DisplayBoard();
-
-        std::cout << "HAS CHILDREN " << currentNode->HasChildren();
+        auto start = std::chrono::high_resolution_clock::now();
 
         // Selection
         while(currentNode->HasChildren()) {
-            std::cout << "Selecting board...";
             // Use ~SQRT(2) as c value
             currentNode = currentNode->SelectChild(1.4142);
             workingGame.MakeMove(currentNode->GetPreviousMove());
-
-            std::cout << currentNode->GetPreviousMove() << "\n";
-            workingGame.DisplayBoard();
-
         }
 
-        std::cout << "Board without children reached\n";
+        auto end = std::chrono::high_resolution_clock::now();
 
-        workingGame.DisplayBoard();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
+        selection.push_back(duration);
 
         // Check if game is over
         if (workingGame.GameStatus() == 0) {
 
-            std::cout << "Game status: " << workingGame.GameStatus() << "\nExpanding now\n";
-
             // Expansion
+            auto start = std::chrono::high_resolution_clock::now();
+
             currentNode->CreateChildren(&workingGame);
             currentNode = currentNode->SelectChild(1.4142);
 
-            std::cout << "New child selected.\n";
-            workingGame.DisplayBoard();
+            auto end = std::chrono::high_resolution_clock::now();
 
-            std::cout << "Random simulation...\n";
+            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+
+            expansions.push_back(duration);
+
+            start = std::chrono::high_resolution_clock::now();
 
             // Simulation
             workingGame.MakeMove(currentNode->GetPreviousMove());
             int randomResult = FinishGameRandomly(&workingGame);
-            std::cout << " RESULT " << randomResult << "\n";
+
+            end = std::chrono::high_resolution_clock::now();
+
+            duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+
+            simulation.push_back(duration);
 
 
             // Backpropagation
@@ -95,31 +107,80 @@ void MCTS::RunSimulations(int num) {
         }
     }
 
+    int selectionAvg = 0;
+
+    for(auto i: selection) {
+        selectionAvg += i.count();
+    }
+
+    selectionAvg /= selection.size();
+
+    std::cout << "Selection took on average " << selectionAvg << " microseconds.\n";
+
+    int expansionAvg = 0;
+
+    for(auto i: expansions) {
+        expansionAvg += i.count();
+    }
+
+    expansionAvg /= expansions.size();
+
+    std::cout << "Expansion took on average " << expansionAvg << " microseconds.\n";
+
+    int simulationAvg = 0;
+
+    for(auto i: simulation) {
+        simulationAvg += i.count();
+    }
+
+    simulationAvg /= simulation.size();
+
+    std::cout << "Simulation took on average " << simulationAvg << " microseconds.\n";
+
+
 }
 
 int FinishGameRandomly(GameBoard * g) {
-    std::cout << "Starting random simulation\n";
+    // TODO: Make new GetValidMoves() that writes to a bitset and then pick randomly from that bitset
+    // Probably fast than creating a new vector every time
+    std::vector<std::chrono::microseconds> getMoves;
+    int moves[81];
+    int count = 0;
+    int numMoves = 0;
     while (g->GameStatus() == 0) {
-        std::vector<int> moves = g->GetValidMoves();
 
-        std::cout << "There are " << moves.size() << " moves\n";
+        auto start = std::chrono::high_resolution_clock::now();
+        count = g->GetValidMovesToArray(&moves[0]);
 
-        if (moves.size() == 0) {
-            g->DisplayBoard();
-            for(int i = 0; i < 9; i++) {
-                std::cout << " VALID BOARD " << g->validBoards << "\n";
-            }
-            
-        }
+        // Make a random move
+        int move = moves[rand() % count];
+        
+        g->MakeMoveFast(move);
 
-                    g->DisplayBoard();
+        auto end = std::chrono::high_resolution_clock::now();
+
+
+        numMoves++;
+
+
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+
+        getMoves.push_back(duration);
 
         
-        // Make a random move
-        int move = moves[rand() % moves.size()];
-        g->MakeMove(move);
-        std::cout << "Made move " << (int)(move / 9) << " " << move % 9  << "\n";
+
     }
+
+    int getMoveAvg = 0;
+
+    for(auto i: getMoves) {
+        getMoveAvg += i.count();
+    }
+
+    // getMoveAvg /= getMoves.size();
+
+    // std::cout << "Getting moves took on average " << getMoveAvg << " " << getMoves.size() << " microseconds to find "<< numMoves << " moves.\n";
+
 
     return g->GameStatus();
 }

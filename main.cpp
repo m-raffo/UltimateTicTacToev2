@@ -13,7 +13,30 @@ int main() {
 
   tree.SetUpSearch(&b);
 
-  tree.RunSimulations(1);
+  while(b.GameStatus() == 0) {
+    tree.RunSimulations(10000);
+    int move = tree.FindBestMove();
+
+    tree.MakeMove(move);
+    b.MakeMove(move);
+    b.DisplayBoard();
+
+    int board, piece;
+
+    std::cout << "ENTER BOARD\n";
+    std::cin >> board;
+
+    std::cout << "ENTER PIECE\n";
+    std::cin >> piece;
+
+    b.MakeMove(board * 9 + piece);
+    std::cout << "B MAKD\n";
+    tree.MakeMove(board * 9 + piece);
+    std::cout << "TERE MAKD\n";
+
+    b.DisplayBoard();
+  }
+
 
   // Node a = Node();
 

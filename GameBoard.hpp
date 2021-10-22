@@ -95,6 +95,16 @@ class GameBoard {
 
 
         /**
+         * Makes a move quickly without saving necessary information to unmake
+         * the move. After moves have been made this way, UnmakeMove() should
+         * not be called.
+         * 
+         * @param move The move to make. Must be 0 <= move <= 80.
+         */
+        void MakeMoveFast(int move);
+
+
+        /**
          * Checks if a move is valid.
          * 
          * @param move The move to be checked.
@@ -149,6 +159,18 @@ class GameBoard {
          */
         int CheckMiniboardStatusByNumber(int b); 
 
+
+        /**
+         * Checks the status of the given miniboard faster by taking
+         * in more information.
+         * 
+         * @param b The miniboard to check. 0 <= b <= 8
+         * @param p The player that played last. 1=X, 2=O
+         * @return 1 in won by X, 2 if won by O, 0 if ongoing, -1 if tie.
+         */
+        int CheckMiniboardStatusByNumberFast(int b, int p);
+
+
         /**
          * Gets the current player to move.
          * @return True if X to move, False otherwise
@@ -175,6 +197,18 @@ class GameBoard {
          * @return A vector with each valid move as a value in range 0..81.
          */
         std::vector<int> GetValidMoves();
+
+
+        /**
+         * Writes all of the valid moves to the given array and returns the
+         * number of valid moves written. Anything at the index returned and
+         * after in the array is untouched.
+         * 
+         * @param b Pointer to the array to write to, at least size 81
+         * @return The number of moves written
+         */
+        int GetValidMovesToArray(int * b);
+
 
         /**
          * Get the current player to move.

@@ -4,6 +4,48 @@ GameBoard::GameBoard() {
     Reset();
 };
 
+void GameBoard::MakeMoveFast(int move) {
+    int targetBoard = (int) move / 9;
+
+    // Make the move
+    if (xToMove) {
+        board[move * 2] = 1; 
+
+        // Keep miniboardStatues updated
+        miniboardStatuses[targetBoard] = CheckMiniboardStatusByNumberFast(targetBoard, 1);
+    }
+
+    else {
+        board[move * 2 + 1] = 1;
+        // Keep miniboardStatues updated
+        miniboardStatuses[targetBoard] = CheckMiniboardStatusByNumberFast(targetBoard, 2);
+
+    }
+
+
+    // Update valid boards
+    validBoards.reset();
+
+    int newRequiredBoard = move % 9;
+    if (miniboardStatuses[newRequiredBoard] != 0) {
+        // Any open board is valid
+        for (size_t i = 0; i < 9; i++) {
+
+            if (miniboardStatuses[i] == 0) {
+                validBoards[i] = 1;
+            }
+        }
+    }
+
+    else {
+        // Only the target board is valid
+        validBoards[newRequiredBoard] = 1;
+    }
+
+    // Update move counter
+    movesCompleted += 1;
+    xToMove = !xToMove;
+}
 
 void GameBoard::MakeMove(int move) {
     // Save board state to the history
@@ -28,12 +70,6 @@ void GameBoard::MakeMove(int move) {
 
     // Update valid boards
     validBoards.reset();
-    std::cout << "Miniboard status " ;
-    for (int_fast8_t i: miniboardStatuses) {
-        std::cout << (int)i << " ";
-    }
-
-    std::cout << "\n";
 
     int newRequiredBoard = move % 9;
     if (miniboardStatuses[newRequiredBoard] != 0) {
@@ -121,6 +157,65 @@ int GameBoard::CheckMiniboardStatusByNumber(int b) {
     return CheckMiniboardStatus(&miniboard);
 }
 
+int GameBoard::CheckMiniboardStatusByNumberFast(int b, int p) {
+    bool valid = false;
+
+    if (p == 1) {
+        // Check if X has won
+        for (size_t winningPosIndex = 0; winningPosIndex < 8; winningPosIndex++)
+        {
+            valid = true;
+
+            for (size_t spotIndex = 0; spotIndex < 18; spotIndex += 2)
+            {
+                // If there is a value marked in the mask, but not on the board, on longer valid
+                if (winningForX[winningPosIndex][spotIndex] && !board[b * 18 + spotIndex]) {
+                    valid = false;
+                    break;
+                }
+            }
+
+            // X has won the board
+            if (valid) {
+                return 1;
+            }
+        }
+
+    } else {
+        // Check if O has won
+
+        for (size_t winningPosIndex = 0; winningPosIndex < 8; winningPosIndex++)
+        {
+            valid = true;
+
+            for (size_t spotIndex = 1; spotIndex < 18; spotIndex += 2)
+            {
+                // If there is a value marked in the mask, but not on the board, on longer valid
+                if (winningForO[winningPosIndex][spotIndex] && !board[b * 18 + spotIndex]) {
+                    valid = false;
+                    break;
+                }
+            }
+
+            // O has won the board
+            if (valid) {
+                return 2;
+            }
+        }
+    }
+
+    // Check for tie
+    for (size_t i = 0; i < 9; i++)
+    {
+        // If any open spaces, not a tie
+        if (!board[b * 18 + i] && !board[b * 18 + i + 1]) {
+            return 0;
+        }
+    }
+    
+    return -1;
+}
+
 int CheckMiniboardStatus(std::bitset<18> *miniboard) {
     // Check if winning for x
     std::bitset<18> mask;
@@ -162,7 +257,7 @@ int CheckMiniboardStatus(std::bitset<18> *miniboard) {
 int GameBoard::GameStatus() {
     // Represent the states of all the games miniboards as one board
     std::bitset<18> miniboard;
-
+    bool openBoard = false;
     miniboard.reset();
 
     for (size_t i = 0; i < 9; i++)
@@ -173,10 +268,15 @@ int GameBoard::GameStatus() {
 
         else if (miniboardStatuses[i] == 2) {
             miniboard[i * 2 + 1] = 1;
+        } else if (miniboardStatuses[i] == 0) {
+            openBoard = true;
         }
     }
-    
-    return CheckMiniboardStatus(&miniboard);
+    int status = CheckMiniboardStatus(&miniboard);
+    if (!openBoard && status == 0) {
+        return -1;
+    }
+    return status;
 };
 
 bool GameBoard::GetXToMove() {
@@ -303,14 +403,36 @@ int GameBoard::GetRequiredBoard() {
 
 std::vector<int> GameBoard::GetValidMoves() {
     std::vector<int> moves;
-    // TODO: Optimize this function to no use ValidMove() call for speed
-    for (size_t i = 0; i < 81; i++) {
-        if (ValidMove(i)) {
-            moves.push_back(i);
+    for (size_t b = 0; b < 9; b++) {    
+        if (validBoards[b]) {
+            for (size_t i = 0; i < 9; i++) {
+                if (!board[(b * 9 + i) * 2] && !board[(b * 9 + i) * 2 + 1]) {
+                    moves.push_back(b * 9 + i);
+                }
+            }
         }
+
     }
-    
+
     return moves;
+}
+
+int GameBoard::GetValidMovesToArray(int * target) {
+    int count = 0;
+
+    for (size_t b = 0; b < 9; b++) {    
+        if (validBoards[b]) {
+            for (size_t i = 0; i < 9; i++) {
+                if (!board[(b * 9 + i) * 2] && !board[(b * 9 + i) * 2 + 1]) {
+                    target[count] = b * 9 + i;
+                    count++;
+                }
+            }
+        }
+
+    }
+
+    return count;
 }
 
 int GameBoard::GetPlayerToMove() {
