@@ -1,5 +1,7 @@
+#pragma once
 #include <iostream>
 #include <bitset>
+#include <vector>
 
 const std::bitset<18> winningForO[8] = {
     0b000000000000010101,
@@ -44,12 +46,6 @@ class GameBoard {
 
 
         /**
-         * Stores which boards are valid to be played on by the current player.
-         */
-        std::bitset<9> validBoards;
-
-
-        /**
          * True if X is the player to move on the board.
          */
         bool xToMove;
@@ -80,7 +76,7 @@ class GameBoard {
         /**
          * Stores the statuses of the miniboards.
          */
-        uint_fast8_t miniboardStatuses[9];
+        int_fast8_t miniboardStatuses[9];
 
     public:
 
@@ -179,6 +175,18 @@ class GameBoard {
          * @return A vector with each valid move as a value in range 0..81.
          */
         std::vector<int> GetValidMoves();
+
+        /**
+         * Get the current player to move.
+         * 
+         * @return 1 for X, 2 for O
+         */
+        int GetPlayerToMove();
+
+        /**
+         * Stores which boards are valid to be played on by the current player.
+         */
+        std::bitset<9> validBoards;
 
 };
 

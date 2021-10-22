@@ -28,11 +28,17 @@ void GameBoard::MakeMove(int move) {
 
     // Update valid boards
     validBoards.reset();
+    std::cout << "Miniboard status " ;
+    for (int_fast8_t i: miniboardStatuses) {
+        std::cout << (int)i << " ";
+    }
 
-    int newRequiredBoard = (int) (move % 9) / 2;
+    std::cout << "\n";
+
+    int newRequiredBoard = move % 9;
     if (miniboardStatuses[newRequiredBoard] != 0) {
         // Any open board is valid
-        for (size_t i = 0; i < 8; i++) {
+        for (size_t i = 0; i < 9; i++) {
 
             if (miniboardStatuses[i] == 0) {
                 validBoards[i] = 1;
@@ -76,7 +82,7 @@ void GameBoard::UnmakeMove() {
     miniboardStatuses[targetBoard] = CheckMiniboardStatusByNumber(targetBoard);
 
     // Copy the valid boards back
-    for (size_t i = 0; i < 8; i++)
+    for (size_t i = 0; i < 9; i++)
     {
         validBoards[i] = previousValidBoards[movesCompleted * 9 + i];
     }
@@ -101,7 +107,7 @@ void GameBoard::Reset() {
 
     xToMove = true;
     movesCompleted = 0;
-    memset(&miniboardStatuses, 1, sizeof(miniboardStatuses));
+    memset(&miniboardStatuses, 0, sizeof(miniboardStatuses));
 };
 
 int GameBoard::CheckMiniboardStatusByNumber(int b) {
@@ -248,8 +254,7 @@ void GameBoard::DisplayBoard() {
             for (int col = 0; col < 3; col++) {
                 absolutePieceIndex = (row * 9) + (boardRow * 3) + col;
                 coords = AbsoluteIndexToBoardAndPiece(absolutePieceIndex);
-                location = 2 + (2 * coords.piece);
-                int spotStatus = GetSpotStatus(absolutePieceIndex);
+                int spotStatus = GetSpotStatus(9 * coords.board + coords.piece);
                 if (spotStatus == 1) {
                     std::cout << "\033[31mX\033[0m";
                 } else if (spotStatus == 2) {
@@ -294,4 +299,24 @@ int GameBoard::GetRequiredBoard() {
     }
 
     return requiredBoard;
+}
+
+std::vector<int> GameBoard::GetValidMoves() {
+    std::vector<int> moves;
+    // TODO: Optimize this function to no use ValidMove() call for speed
+    for (size_t i = 0; i < 81; i++) {
+        if (ValidMove(i)) {
+            moves.push_back(i);
+        }
+    }
+    
+    return moves;
+}
+
+int GameBoard::GetPlayerToMove() {
+    if (xToMove) {
+        return 1;
+    }
+
+    return 2;
 }

@@ -16,13 +16,15 @@ class MCTS {
         /**
          * The start node of the search tree.
          */
-        Node rootNode;
+        Node * rootNode;
 
     public:
         /**
          * Constructor for MCTS object.
+         * 
+         * @param b The position to start the search from
          */
-        MCTS();
+        MCTS(GameBoard * b);
 
         /**
          * Set up the tree for a new search from the given position.
