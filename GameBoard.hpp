@@ -3,7 +3,9 @@
 #include <bitset>
 #include <vector>
 
-const std::bitset<18> winningForO[8] = {
+const std::bitset<9> fullBoard = 0b111111111;
+
+const std::bitset<18> winningForX[8] = {
     0b000000000000010101,
     0b000000010101000000,
     0b010101000000000000,
@@ -14,7 +16,7 @@ const std::bitset<18> winningForO[8] = {
     0b000001000100010000,
 };
 
-const std::bitset<18> winningForX[8] = {
+const std::bitset<18> winningForO[8] = {
     0b000000000000101010,
     0b000000101010000000,
     0b101010000000000000,
@@ -24,8 +26,6 @@ const std::bitset<18> winningForX[8] = {
     0b100000001000000010,
     0b000010001000100000,
 };
-
-const std::bitset<9> fullBoard = 0b111111111;
 
 
 class GameBoard {
@@ -73,12 +73,14 @@ class GameBoard {
          */
         uint_fast8_t movesCompleted;
 
+        
+
+    public:
+
         /**
          * Stores the statuses of the miniboards.
          */
         int_fast8_t miniboardStatuses[9];
-
-    public:
 
         /**
          * Default constructor. Starts game as an empty board.

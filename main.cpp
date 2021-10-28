@@ -13,29 +13,54 @@ int main() {
 
   tree.SetUpSearch(&b);
 
-  while(b.GameStatus() == 0) {
-    tree.RunSimulations(10000);
-    int move = tree.FindBestMove();
+  b.MakeMove(0);
+  b.MakeMove(10);
+  b.MakeMove(1);
+  std::cout << "FAST " << b.CheckMiniboardStatusByNumberFast(0, 1) << "\n";
+  std::cout << "SLOW " << b.CheckMiniboardStatusByNumber(0) << "\n";
 
-    tree.MakeMove(move);
-    b.MakeMove(move);
-    b.DisplayBoard();
+  b.MakeMove(11);
 
-    int board, piece;
+  b.DisplayBoard();
 
-    std::cout << "ENTER BOARD\n";
-    std::cin >> board;
+  b.MakeMove(2);
 
-    std::cout << "ENTER PIECE\n";
-    std::cin >> piece;
+  std::cout << "FAST " << b.CheckMiniboardStatusByNumberFast(0, 1) << "\n";
+  std::cout << "SLOW " << b.CheckMiniboardStatusByNumber(0) << "\n";
 
-    b.MakeMove(board * 9 + piece);
-    std::cout << "B MAKD\n";
-    tree.MakeMove(board * 9 + piece);
-    std::cout << "TERE MAKD\n";
 
-    b.DisplayBoard();
-  }
+  b.DisplayBoard();
+
+
+  std::cout <<" DONE \n";
+
+
+  tree.RunSimulations(10000);
+
+
+  // while(b.GameStatus() == 0) {
+
+
+  //   int board, piece;
+
+  //   std::cout << "ENTER BOARD\n";
+  //   std::cin >> board;
+
+  //   std::cout << "ENTER PIECE\n";
+  //   std::cin >> piece;
+
+  //   b.MakeMove(board * 9 + piece);
+  //   tree.MakeMove(board * 9 + piece);
+
+  //   b.DisplayBoard();
+
+  //       tree.RunSimulations(10000);
+  //   int move = tree.FindBestMove();
+
+  //   tree.MakeMove(move);
+  //   b.MakeMove(move);
+  //   b.DisplayBoard();
+  // }
 
 
   // Node a = Node();

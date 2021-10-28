@@ -1,3 +1,4 @@
+#pragma once
 #include "GameBoard.hpp"
 #include "Node.hpp"
 
@@ -25,6 +26,13 @@ class MCTS {
          * @param b The position to start the search from
          */
         MCTS(GameBoard * b);
+
+        /**
+         * Constructor for MCTS object.
+         * 
+         * Starts with an empty board if no arguments given.
+         */
+        MCTS();
 
         /**
          * Set up the tree for a new search from the given position.
@@ -56,6 +64,11 @@ class MCTS {
          * @param m The move index to make
          */
         void MakeMove(int m);
+
+        /**
+         * Calls DisplayBoard() on the search tree's gameboard.
+         */
+        void DisplayBoard();
 
 };
 

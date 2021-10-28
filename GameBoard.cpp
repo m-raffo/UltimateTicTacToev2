@@ -160,6 +160,7 @@ int GameBoard::CheckMiniboardStatusByNumber(int b) {
 int GameBoard::CheckMiniboardStatusByNumberFast(int b, int p) {
     bool valid = false;
 
+
     if (p == 1) {
         // Check if X has won
         for (size_t winningPosIndex = 0; winningPosIndex < 8; winningPosIndex++)
@@ -181,7 +182,9 @@ int GameBoard::CheckMiniboardStatusByNumberFast(int b, int p) {
             }
         }
 
-    } else {
+    } 
+    
+    if (p == 1 || p == 2) {
         // Check if O has won
 
         for (size_t winningPosIndex = 0; winningPosIndex < 8; winningPosIndex++)
@@ -208,7 +211,7 @@ int GameBoard::CheckMiniboardStatusByNumberFast(int b, int p) {
     for (size_t i = 0; i < 9; i++)
     {
         // If any open spaces, not a tie
-        if (!board[b * 18 + i] && !board[b * 18 + i + 1]) {
+        if (!board[b * 18 + (i * 2)] && !board[b * 18 + (i * 2) + 1]) {
             return 0;
         }
     }
