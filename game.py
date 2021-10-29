@@ -75,7 +75,7 @@ def draw_game(screen, game):
 
             screen.blit(img, (imgx, imgy))
         else:
-            for spot_index in range(miniboard* 9, miniboard * 9 + 9):
+            for spot_index in range(miniboard * 9, miniboard * 9 + 9):
 
                 if game.getSpot(spot_index) == 1:
                     draw_move(screen, spot_index // 9, spot_index % 9, "X", font)
@@ -285,6 +285,7 @@ def draw_move(screen, board, piece, text, font, color=None):
 
     screen.blit(img, (draw_x, draw_y))
 
+
 def display_message(screen, text, color=(255, 255, 255), bg_color=(100, 100, 100)):
     img = med_font.render(text, True, color)
 
@@ -296,9 +297,7 @@ def display_message(screen, text, color=(255, 255, 255), bg_color=(100, 100, 100
 
     # Draw the background
     pygame.draw.rect(
-        screen,
-        bg_color,
-        pygame.Rect(rectx, recty, width, height),
+        screen, bg_color, pygame.Rect(rectx, recty, width, height),
     )
 
     # Draw the text
@@ -356,8 +355,6 @@ if __name__ == "__main__":
                 game.makeBestMove()
                 sims_complete = 0
 
-
-
                 is_players_move = True
 
                 result = game.getGameStatus()
@@ -375,69 +372,6 @@ if __name__ == "__main__":
                     game_running = False
                     is_players_move = False
                     continue
-
-            # if minimax_results_evals_and_boards.ready():
-            #     p.close()
-            #     p.terminate()
-
-            #     is_players_move = True
-            #     evals_and_boards = minimax_results_evals_and_boards.get()
-
-            #     if HUMAN_PLAY_AS_O:
-            #         # Order the moves based on their evaluations
-            #         result = max(evals_and_boards, key=lambda x: (x[0]))
-
-            #         # If a forced win, take the shortest path to get there
-            #         if result[0] == float("inf"):
-            #             result = max(
-            #                 evals_and_boards, key=lambda x: (x[0], -x[1].inf_depth)
-            #             )
-
-            #         # If a forced loss, take the longest path to get there
-            #         elif result[0] == float("-inf"):
-            #             result = max(
-            #                 evals_and_boards, key=lambda x: (x[0], x[1].inf_depth)
-            #             )
-
-            #     else:
-            #         # Order the moves based on their evaluations
-            #         result = min(evals_and_boards, key=lambda x: (x[0]))
-
-            #         # If a forced win, take the shortest path to get there
-            #         if result[1] == float("-inf"):
-            #             result = min(
-            #                 evals_and_boards, key=lambda x: (x[0], x[1].inf_depth)
-            #             )
-
-            #         # If a forced loss, take the longest path to get there
-            #         elif result[1] == float("inf"):
-            #             result = min(
-            #                 evals_and_boards, key=lambda x: (x[0], -x[1].inf_depth)
-            #             )
-
-            #     current_eval, minimax_node = result
-
-            #     minimax_node.children = []
-            #     minimax_node.add_children()
-
-            #     move = minimax_node.board.previous_move
-            #     (*move)
-            #     # draw_move(screen, move[0], move[1], "X", font)
-
-            #     print(game)
-
-            #     result = game.game_result()
-            #     if result != 2:
-            #         screen.fill((255, 255, 255))
-            #         draw_game(screen, game)
-            #         if result == 1:
-            #             display_message(screen, "X WINS!")
-            #         elif result == -1:
-            #             display_message(screen, "O WINS!")
-            #         elif result == 0:
-            #             display_message(screen, "TIE GAME!")
-
-            #         game_running = False
 
         elif is_players_move and game_running:
             for event in pygame.event.get():
@@ -460,24 +394,6 @@ if __name__ == "__main__":
                     is_players_move = False
                     board, piece = mouse_pos_to_board_and_piece(pygame.mouse.get_pos())
 
-                    # test_board = minimax_node.board.copy_board()
-
-                    # test_board.move(board, piece)
-
-                    # In order to avoid restarting the node tree every time, find the node among current_game_node.children with
-                    # the board that matches the player's move
-                    # found_board = False
-
-                    # if len(minimax_node.children) == 0:
-                    #     minimax_node.add_children()
-
-                    # for i in minimax_node.children:
-
-                    #     # If the board matches, use this as the new board
-                    #     if np.array_equal(i.board.board, test_board.board):
-                    #         minimax_node = i
-                    #         found_board = True
-
                     if not game.validMove(board * 9 + piece):
                         print(
                             "Your move was not found as a valid move. Are you sure you entered it correctly?"
@@ -485,13 +401,9 @@ if __name__ == "__main__":
                         is_players_move = True
                         continue
 
-                    # draw_move(screen, board, piece, "O", font)
                     game.makeMove(board * 9 + piece)
 
-                    # print(game.to_move)
-                    # print(game)
                     game.display()
-
 
                     result = game.getGameStatus()
 
@@ -508,11 +420,5 @@ if __name__ == "__main__":
                         game_running = False
                         continue
 
-                    # (
-                    #     minimax_results_evals_and_boards,
-                    #     p,
-                    # ) = mcts.minimax_search_prune_time_limited_async(
-                    #     minimax_node, DEPTHS, TIME_LIMIT, not HUMAN_PLAY_AS_O
-                    # )
         else:
             pygame.event.pump()

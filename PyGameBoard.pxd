@@ -2,8 +2,10 @@
 
 from libcpp cimport bool
 
+
 cdef extern from "GameBoard.cpp":
     pass
+
 
 cdef extern from "GameBoard.hpp":
     cdef cppclass GameBoard:
@@ -31,8 +33,10 @@ cdef extern from "GameBoard.hpp":
 cdef extern from "MCTS.cpp":
     pass
 
+
 cdef extern from "Node.cpp":
     pass
+
 
 cdef extern from "MCTS.hpp":
     cdef cppclass MCTS:
