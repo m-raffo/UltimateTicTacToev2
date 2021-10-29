@@ -27,7 +27,7 @@ cdef extern from "GameBoard.hpp":
 
         void DisplayBoard()
 
-        int CheckMiniboardStatusByNumber(int)
+        int GetMiniboardStatus(int)
 
 
 cdef extern from "MCTS.cpp":

@@ -56,7 +56,7 @@ cdef class PyMCTS:
         assert type(board) == int
         assert 0 <= board <= 8
 
-        return self.c_gameboard.CheckMiniboardStatusByNumber(board)
+        return self.c_gameboard.GetMiniboardStatus(board)
 
 
     def getSpot(self, spot):
