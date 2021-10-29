@@ -333,7 +333,7 @@ void GameBoard::DisplayBoard() {
     std::cout << "Required board: None\n";
   }
 
-  int absolutePieceIndex, location;
+  int absolutePieceIndex;
   BoardCoords coords;
 
   for (int row = 0; row < 9; row++) {
