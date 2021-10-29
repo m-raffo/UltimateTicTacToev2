@@ -208,3 +208,21 @@ int FinishGameRandomly(GameBoard* g) {
 
   return g->GameStatus();
 }
+
+bool MCTS::ValidMove(int m) { return game.ValidMove(m); }
+
+int MCTS::GetGameStatus() { return game.GameStatus(); };
+
+int MCTS::GetRequiredBoard() { return game.GetRequiredBoard(); };
+
+int MCTS::GetToMove() {
+  if (game.GetXToMove()) {
+    return 1;
+  }
+
+  return 2;
+};
+
+int MCTS::GetSpotStatus(int s) { return game.GetSpotStatus(s); };
+
+int MCTS::GetMiniboardStatus(int b) { return game.GetMiniboardStatus(b); };

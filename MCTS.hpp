@@ -69,6 +69,49 @@ class MCTS {
    * Calls DisplayBoard() on the search tree's gameboard.
    */
   void DisplayBoard();
+
+  /**
+   * Check if the move is valid.
+   *
+   * @param m The move to theck. 0..80
+   * @return True if valid, false otherwise
+   */
+  bool ValidMove(int m);
+
+  /**
+   * Gets the current status of the game.
+   *
+   * @return 1 for X win, 2 for O win, 0 for ongoing, -1 for tie
+   */
+  int GetGameStatus();
+
+  /**
+   * Gets the current required board, -1 if no required board.
+   *
+   * @return The board
+   */
+  int GetRequiredBoard();
+
+  /**
+   * Gets the current player to move.
+   *
+   * @return 1 for X to move, 2 for O to move
+   */
+  int GetToMove();
+
+  /**
+   * Gets the current status of a spot.
+   *
+   * @return 1 for taken by X, 2 for taken by O, 0 for open
+   */
+  int GetSpotStatus(int s);
+
+  /**
+   * Gets the status of a miniboard.
+   *
+   * @return 1 for1 for X win, 2 for O win, 0 for ongoing, -1 for tie
+   */
+  int GetMiniboardStatus(int b);
 };
 
 /**
