@@ -11,14 +11,14 @@ void GameBoard::MakeMoveFast(int move) {
 
     // Keep miniboardStatues updated
     miniboardStatuses[targetBoard] =
-        CheckMiniboardStatusByNumberFast(targetBoard, 1);
+        UpdateMiniboardStatusByNumberFast(targetBoard, 1);
   }
 
   else {
     board[move * 2 + 1] = 1;
     // Keep miniboardStatues updated
     miniboardStatuses[targetBoard] =
-        CheckMiniboardStatusByNumberFast(targetBoard, 2);
+        UpdateMiniboardStatusByNumberFast(targetBoard, 2);
   }
 
   // Update valid boards
@@ -63,7 +63,7 @@ void GameBoard::MakeMove(int move) {
 
   // Keep miniboardStatues updated
   int targetBoard = (int)move / 9;
-  miniboardStatuses[targetBoard] = CheckMiniboardStatusByNumber(targetBoard);
+  miniboardStatuses[targetBoard] = UpdateMiniboardStatusByNumber(targetBoard);
 
   // Update valid boards
   validBoards.reset();
@@ -109,7 +109,7 @@ void GameBoard::UnmakeMove() {
 
   // Update the miniboard statuses
   int targetBoard = (int)previousMoves[movesCompleted] / 9;
-  miniboardStatuses[targetBoard] = CheckMiniboardStatusByNumber(targetBoard);
+  miniboardStatuses[targetBoard] = UpdateMiniboardStatusByNumber(targetBoard);
 
   // Copy the valid boards back
   for (size_t i = 0; i < 9; i++) {
@@ -141,17 +141,17 @@ void GameBoard::Reset() {
   memset(&miniboardStatuses, 0, sizeof(miniboardStatuses));
 };
 
-int GameBoard::CheckMiniboardStatusByNumber(int b) {
+int GameBoard::UpdateMiniboardStatusByNumber(int b) {
   std::bitset<18> miniboard;
 
   for (size_t i = 0; i < 18; i++) {
     miniboard[i] = board[b * 18 + i];
   }
 
-  return CheckMiniboardStatus(&miniboard);
+  return EvaluateMiniboardStatus(&miniboard);
 }
 
-int GameBoard::CheckMiniboardStatusByNumberFast(int b, int p) {
+int GameBoard::UpdateMiniboardStatusByNumberFast(int b, int p) {
   bool valid = false;
 
   if (p == 1) {
@@ -176,7 +176,7 @@ int GameBoard::CheckMiniboardStatusByNumberFast(int b, int p) {
     }
   }
 
-  if (p == 1 || p == 2) {
+  if (p == 2) {
     // Check if O has won
 
     for (size_t winningPosIndex = 0; winningPosIndex < 8; winningPosIndex++) {
@@ -210,7 +210,7 @@ int GameBoard::CheckMiniboardStatusByNumberFast(int b, int p) {
   return -1;
 }
 
-int CheckMiniboardStatus(std::bitset<18> *miniboard) {
+int EvaluateMiniboardStatus(std::bitset<18> *miniboard) {
   // Check if winning for x
   std::bitset<18> mask;
 
@@ -265,7 +265,7 @@ int GameBoard::GameStatus() {
       openBoard = true;
     }
   }
-  int status = CheckMiniboardStatus(&miniboard);
+  int status = EvaluateMiniboardStatus(&miniboard);
   if (!openBoard && status == 0) {
     return -1;
   }
@@ -424,3 +424,5 @@ int GameBoard::GetPlayerToMove() {
 
   return 2;
 }
+
+int GameBoard::GetMiniboardStatus(int b) { return miniboardStatuses[b]; }

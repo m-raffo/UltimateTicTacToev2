@@ -58,12 +58,32 @@ class GameBoard {
    */
   uint_fast8_t movesCompleted;
 
- public:
   /**
    * Stores the statuses of the miniboards.
    */
   int_fast8_t miniboardStatuses[9];
 
+  /**
+   * Updates the status of the given miniboard.
+   *
+   * @param b The miniboard to check. 0 <= b <= 8
+   * @return 1 if won by X, 2 if won by O, 0 if ongoing, -1 if tie.
+   */
+  int UpdateMiniboardStatusByNumber(int b);
+
+  /**
+   * Updates the status of the given miniboard.
+   *
+   * This operation is performed faster than UpdateMiniboardStatusByNumber
+   * because more information is given by the caller.
+   *
+   * @param b The miniboard to check. 0 <= b <= 8
+   * @param p The player that played last. 1=X, 2=O
+   * @return 1 in won by X, 2 if won by O, 0 if ongoing, -1 if tie.
+   */
+  int UpdateMiniboardStatusByNumberFast(int b, int p);
+
+ public:
   /**
    * Default constructor. Starts game as an empty board.
    */
@@ -79,7 +99,9 @@ class GameBoard {
 
   /**
    * Makes a move quickly without saving necessary information to unmake
-   * the move. After moves have been made this way, UnmakeMove() should
+   * the move.
+   *
+   * @warning After moves have been made this way, UnmakeMove() should
    * not be called.
    *
    * @param move The move to make. Must be 0 <= move <= 80.
@@ -128,24 +150,6 @@ class GameBoard {
   void Reset();
 
   /**
-   * Checks the status of the given miniboard.
-   *
-   * @param b The miniboard to check. 0 <= b <= 8
-   * @return 1 if won by X, 2 if won by O, 0 if ongoing, -1 if tie.
-   */
-  int CheckMiniboardStatusByNumber(int b);
-
-  /**
-   * Checks the status of the given miniboard faster by taking
-   * in more information.
-   *
-   * @param b The miniboard to check. 0 <= b <= 8
-   * @param p The player that played last. 1=X, 2=O
-   * @return 1 in won by X, 2 if won by O, 0 if ongoing, -1 if tie.
-   */
-  int CheckMiniboardStatusByNumberFast(int b, int p);
-
-  /**
    * Gets the current player to move.
    * @return True if X to move, False otherwise
    */
@@ -191,6 +195,14 @@ class GameBoard {
    * Stores which boards are valid to be played on by the current player.
    */
   std::bitset<9> validBoards;
+
+  /**
+   * Checks the status of the given miniboard.
+   *
+   * @param b The board to check in range 0..8.
+   * @return The status of the board. 1=X win; 2=O win; 0=ongoing; -1=Tie
+   */
+  int GetMiniboardStatus(int b);
 };
 
 /**
@@ -199,7 +211,7 @@ class GameBoard {
  * @param miniboard A pointer to the miniboard to check.
  * @return 1 if won by X, 2 if won by O, 0 if ongoing, -1 if tie.
  */
-int CheckMiniboardStatus(std::bitset<18> *miniboard);
+int EvaluateMiniboardStatus(std::bitset<18> *miniboard);
 
 class BoardCoords {
  public:

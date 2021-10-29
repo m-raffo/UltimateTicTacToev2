@@ -1,7 +1,8 @@
-#include "GameBoard.hpp"
 #include <iostream>
-#include "Node.hpp"
+
+#include "GameBoard.hpp"
 #include "MCTS.hpp"
+#include "Node.hpp"
 
 int main() {
   std::cout << "Working!\n";
@@ -16,30 +17,19 @@ int main() {
   b.MakeMove(0);
   b.MakeMove(10);
   b.MakeMove(1);
-  std::cout << "FAST " << b.CheckMiniboardStatusByNumberFast(0, 1) << "\n";
-  std::cout << "SLOW " << b.CheckMiniboardStatusByNumber(0) << "\n";
-
   b.MakeMove(11);
 
   b.DisplayBoard();
 
   b.MakeMove(2);
 
-  std::cout << "FAST " << b.CheckMiniboardStatusByNumberFast(0, 1) << "\n";
-  std::cout << "SLOW " << b.CheckMiniboardStatusByNumber(0) << "\n";
-
-
   b.DisplayBoard();
 
-
-  std::cout <<" DONE \n";
-
+  std::cout << " DONE \n";
 
   tree.RunSimulations(10000);
 
-
   // while(b.GameStatus() == 0) {
-
 
   //   int board, piece;
 
@@ -62,7 +52,6 @@ int main() {
   //   b.DisplayBoard();
   // }
 
-
   // Node a = Node();
 
   // b.MakeMove(1);
@@ -77,9 +66,7 @@ int main() {
 
   // b.MakeMove(14);
 
-
   // a.CreateChildren(&b);
-
 
   // for (Node * i: a.children) {
   //   std::cout << "Making move " << i->GetPreviousMove() << "\n";
@@ -89,5 +76,5 @@ int main() {
   //   b.UnmakeMove();
   // }
 
-  return(0);
+  return (0);
 }
