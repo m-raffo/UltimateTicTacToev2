@@ -30,8 +30,9 @@ DEPTH2 = 4
 DEPTHS = [3, 4, 6, 8, 10]
 TIME_LIMIT = 4
 
-SIMS = 10000
-SIMS_CHUNK_SIZE = 10000
+SIMS = 100000
+SIMS_PER_FRAME = 20000
+SIMS_CHUNK_SIZE = SIMS
 
 
 def draw_game(screen, game):
@@ -374,6 +375,8 @@ if __name__ == "__main__":
                     continue
 
         elif is_players_move and game_running:
+            game.runSimulations(SIMS_PER_FRAME)
+
             for event in pygame.event.get():
                 # Did the user hit a key?
 
